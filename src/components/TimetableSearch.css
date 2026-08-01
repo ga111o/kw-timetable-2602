@@ -1,0 +1,801 @@
+/* 3분할: 검색 25% | 목록 25% | 시간표 50% */
+.timetable-search {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  text-align: left;
+  position: relative;
+}
+
+.timetable-search__panels {
+  display: grid;
+  grid-template-columns:
+    minmax(0, var(--search-size, 25fr))
+    20px
+    minmax(0, var(--list-size, 25fr))
+    20px
+    minmax(0, var(--timetable-size, 50fr));
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.timetable-search__panel {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.timetable-search__panel-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: var(--panel-content-min-width);
+  height: 100%;
+  min-height: 0;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.timetable-search__resizer {
+  position: relative;
+  z-index: 1;
+  width: 20px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.timetable-search__resizer::before {
+  content: '';
+  position: absolute;
+  inset: 0 9px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.timetable-search__resizer::after {
+  content: '↔';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: #242424;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.8rem;
+  font-weight: 700;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.timetable-search__resizer:hover::before,
+.timetable-search__resizer:focus-visible::before {
+  background: #8A1601;
+}
+
+.timetable-search__resizer:hover::after,
+.timetable-search__resizer:focus-visible::after {
+  border-color: #8A1601;
+  background: #8A1601;
+  color: #fff;
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.timetable-search__resizer:focus-visible {
+  outline: 2px solid #8A1601;
+  outline-offset: -2px;
+}
+
+.timetable-search__panel--search {
+  --panel-content-min-width: 200px;
+}
+
+.timetable-search__panel--search .timetable-search__input,
+.timetable-search__panel--search .timetable-search__meta {
+  flex-shrink: 0;
+}
+
+.timetable-search__panel--search .timetable-search__results {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.timetable-search__panel--list {
+  --panel-content-min-width: 200px;
+  container: cart-panel / inline-size;
+}
+
+.timetable-search__panel--list .timetable-search__cart {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+}
+
+.timetable-search__panel--list .timetable-search__cart-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.timetable-search__panel--timetable {
+  --panel-content-min-width: 200px;
+  border-right: none;
+}
+
+.timetable-search__panel--timetable .timetable-view {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.timetable-search__timetable-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.9375rem;
+  padding: 2rem;
+}
+
+.timetable-search__no-time-section {
+  flex-shrink: 0;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timetable-search__no-time-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.timetable-search__no-time-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timetable-search__no-time-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 2.5rem;
+  box-sizing: border-box;
+}
+
+.timetable-search__no-time-title {
+  font-weight: 500;
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.9);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timetable-search__no-time-prof {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.55);
+  flex-shrink: 0;
+}
+
+.timetable-search__priority-row {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timetable-search__priority-btn {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.timetable-search__priority-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.timetable-search__priority-btn--active {
+  background-color: #af4a38;
+  border-color: #8A1601;
+  color: #fff;
+}
+
+.timetable-search__priority-btn--active:hover {
+  background-color: #af4a38;
+}
+
+.timetable-search__cart-empty {
+  padding: 1rem 0;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.875rem;
+}
+
+.timetable-search__cart-add-details {
+  margin-bottom: 1rem;
+}
+
+.timetable-search__cart-add-toggle {
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.timetable-search__cart-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.timetable-search__cart-add-input {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  box-sizing: border-box;
+}
+
+.timetable-search__cart-add-input:focus {
+  outline: no8A1601;
+  border-color: #8A1601;
+}
+
+.timetable-search__cart-add-input--time {
+  flex: 0 1 140px;
+}
+
+.timetable-search__cart-add-input--credits {
+  flex: 0 1 70px;
+}
+
+.timetable-search__cart-add-btn {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 68A1601;
+  background-color: #8A1601;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.timetable-search__cart-add-btn:hover:not(:disabled) {
+  background-color: #8A1601;
+}
+
+.timetable-search__cart-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timetable-search__cart-item-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.2rem;
+  border-radius: 4px;
+  background-color: #af4a38;
+  color: rgba(255, 255, 255, 0.9);
+  margin-left: 0.25rem;
+}
+
+.timetable-search__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.timetable-search__input:focus {
+  outline: no8A1601;
+  border-color: #8A1601;
+  box-shadow: 0 0 0 2px #af4a38;
+}
+
+.timetable-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.timetable-search__meta {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.timetable-search__count {
+  font-weight:8A1601;
+  color: #8A1601;
+}
+
+.timetable-search__results {
+  margin-top: 1rem;
+}
+
+.timetable-search__empty {
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.timetable-search__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timetable-search__item {
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  cursor: pointer;
+  transition: outline-color 0.2s;
+}
+
+.timetable-search__item[aria-pressed='true'],
+.timetable-search__item:focus-visible {
+  outline-color: #8A1601;
+}
+
+.timetable-search__item-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.timetable-search__item-title {
+  min-width: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.95);
+  overflow-wrap: anywhere;
+}
+
+.timetable-search__item-code {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.timetable-search__item-details {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.timetable-search__item-details span:nth-child(even) {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.timetable-search__item-category,
+.timetable-search__item-section,
+.timetable-search__item-type {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.25rem;
+}
+
+/* Cart */
+.timetable-search__cart {
+  padding: 1.25rem;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timetable-search__cart-count {
+  font-weight:8A1601;
+  color: #8A1601;
+}
+
+.timetable-search__cart-credits {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.timetable-search__cart-credits--timetable {
+  margin-bottom: 1rem;
+}
+
+.timetable-search__cart-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timetable-search__cart-item {
+  padding: 0.75rem 1rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  cursor: pointer;
+  transition: outline-color 0.2s;
+}
+
+.timetable-search__cart-item[aria-pressed='true'],
+.timetable-search__cart-item:focus-visible {
+  outline-color: #8A1601;
+}
+
+.timetable-search__cart-item-body {
+  min-width: 0;
+}
+
+.timetable-search__cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.timetable-search__cart-item-title-wrap {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.timetable-search__cart-item-header strong {
+  min-width: 0;
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.95);
+  overflow-wrap: anywhere;
+}
+
+.timetable-search__cart-remove {
+  flex-shrink: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.timetable-search__cart-remove:hover {
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.5);
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.timetable-search__cart-item-details {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.timetable-search__cart-item-category,
+.timetable-search__cart-item-type {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.25rem;
+}
+
+@container cart-panel (max-width: 480px) {
+  .timetable-search__cart {
+    padding: 0.875rem;
+  }
+
+  .timetable-search__cart-item {
+    padding: 0.75rem;
+  }
+
+  .timetable-search__cart-item-category,
+  .timetable-search__cart-item-type {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .timetable-search__input {
+    border-color: rgba(0, 0, 0, 0.15);
+    background-color: #f8f8f8;
+  }
+
+  .timetable-search__input:focus {
+    box-shadow: 0 0 0 2px #af4a38;
+  }
+
+  .timetable-search__input::placeholder {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .timetable-search__meta {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .timetable-search__empty {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .timetable-search__item {
+    background-color: #f8f8f8;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .timetable-search__cart {
+    background-color: #f0f0f0;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .timetable-search__cart-credits {
+    color: rgba(0, 0, 0, 0.65);
+  }
+
+  .timetable-search__cart-item {
+    background-color: #fff;
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .timetable-search__cart-item-header strong {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .timetable-search__cart-remove {
+    color: rgba(0, 0, 0, 0.55);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .timetable-search__cart-remove:hover {
+    color: #c92a2a;
+    border-color: rgba(201, 42, 42, 0.4);
+    background: rgba(201, 42, 42, 0.08);
+  }
+
+  .timetable-search__cart-item-details {
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .timetable-search__cart-item-category,
+  .timetable-search__cart-item-type {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .timetable-search__item-title {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .timetable-search__item-code {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .timetable-search__item-details {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .timetable-search__item-details span:nth-child(even) {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .timetable-search__item-category,
+  .timetable-search__item-section,
+  .timetable-search__item-type {
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .timetable-search__panel {
+    border-right-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .timetable-search__resizer::before {
+    background: rgba(0, 0, 0, 0.18);
+  }
+
+  .timetable-search__resizer::after {
+    border-color: rgba(0, 0, 0, 0.3);
+    background: #fff;
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .timetable-search__timetable-placeholder,
+  .timetable-search__cart-empty {
+    color: rgba(0, 0, 0, 0.45);
+  }
+
+  .timetable-search__no-time-bar {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .timetable-search__no-time-title {
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  .timetable-search__no-time-prof {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .timetable-search__no-time-section {
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ----- 모바일: 단일 패널 + 하단 네비 ----- */
+@media (max-width: 768px) {
+  .timetable-search {
+    min-width: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .timetable-search__panels {
+    display: block;
+    position: relative;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .timetable-search__resizer {
+    display: none;
+  }
+
+  .timetable-search__panel {
+    position: absolute;
+    inset: 0;
+    border-right: none;
+    min-width: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .timetable-search__panel-content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .timetable-search--mobile-active-search .timetable-search__panel[data-mobile-tab="search"],
+  .timetable-search--mobile-active-list .timetable-search__panel[data-mobile-tab="list"],
+  .timetable-search--mobile-active-timetable .timetable-search__panel[data-mobile-tab="timetable"] {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .timetable-search__panel--search,
+  .timetable-search__panel--list,
+  .timetable-search__panel--timetable {
+    flex: none;
+    min-width: 0;
+  }
+
+  /* 하단 네비게이션 (모바일에서만 표시) */
+  .timetable-search__mobile-nav {
+    display: flex;
+    flex-shrink: 0;
+    align-items: stretch;
+    justify-content: space-around;
+    gap: 0;
+    width: 100%;
+    min-height: 56px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-sizing: border-box;
+  }
+
+  .timetable-search__mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+  }
+
+  .timetable-sea8A1601{
+    color: #8A1601;
+    font-weight: 600;
+  }
+
+  .timetable-search__mobile-nav-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+}
+
+/* 데스크톱: 하단 네비 숨김 */
+@media (min-width: 769px) {
+  .timetable-search__mobile-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) and (prefers-color-scheme: light) {
+  .timetable-search__mobile-nav {
+    background: rgba(255, 255, 255, 0.95);
+    border-top-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .timetable-search__mobile-nav-btn {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .timetable-search__mobile-nav-btn--active {
+    color: #8A1601;
+  }
+}
